@@ -14,6 +14,10 @@ A modern, responsive note-taking application with category management, built wit
 - 🎨 Modern, vibrant UI with animations
 - 📱 Responsive design for all devices
 
+## 📸 Screenshots
+
+![Note Taking App Interface](./screenshots/screencapture-localhost-3000-2025-03-22-01_35_22.png)
+
 ## 🚀 Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
