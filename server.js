@@ -1,7 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
-const path = require('path'); // Add this line
+const path = require('path');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -10,17 +10,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Add this route at the top of your routes
+// Serve the main HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Get all notes
+// Get all notes with categories
 app.get('/api/notes', async (req, res) => {
   try {
     const notes = await prisma.note.findMany({
       orderBy: {
         updatedAt: 'desc',
+      },
+      include: {
+        category: true,
       },
     });
     res.json(notes);
@@ -29,13 +32,16 @@ app.get('/api/notes', async (req, res) => {
   }
 });
 
-// Get a single note
+// Get a single note with category
 app.get('/api/notes/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const note = await prisma.note.findUnique({
       where: {
         id: parseInt(id),
+      },
+      include: {
+        category: true,
       },
     });
     
@@ -49,10 +55,10 @@ app.get('/api/notes/:id', async (req, res) => {
   }
 });
 
-// Create a note
+// Create a note with optional category
 app.post('/api/notes', async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, categoryId } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ error: 'Title and content are required' });
@@ -62,6 +68,10 @@ app.post('/api/notes', async (req, res) => {
       data: {
         title,
         content,
+        ...(categoryId && { categoryId: parseInt(categoryId) }),
+      },
+      include: {
+        category: true,
       },
     });
     
@@ -71,14 +81,14 @@ app.post('/api/notes', async (req, res) => {
   }
 });
 
-// Update a note
+// Update a note with optional category
 app.put('/api/notes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content } = req.body;
+    const { title, content, categoryId } = req.body;
     
-    if (!title && !content) {
-      return res.status(400).json({ error: 'At least title or content must be provided' });
+    if (!title && !content && categoryId === undefined) {
+      return res.status(400).json({ error: 'At least one field must be provided' });
     }
     
     const note = await prisma.note.update({
@@ -88,6 +98,10 @@ app.put('/api/notes/:id', async (req, res) => {
       data: {
         ...(title && { title }),
         ...(content && { content }),
+        ...(categoryId !== undefined && { categoryId: categoryId ? parseInt(categoryId) : null }),
+      },
+      include: {
+        category: true,
       },
     });
     
@@ -152,49 +166,6 @@ app.post('/api/categories', async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'A category with this name already exists' });
     }
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update the create note endpoint to include category
-app.post('/api/notes', async (req, res) => {
-  try {
-    const { title, content, categoryId } = req.body;
-    
-    if (!title || !content) {
-      return res.status(400).json({ error: 'Title and content are required' });
-    }
-    
-    const note = await prisma.note.create({
-      data: {
-        title,
-        content,
-        ...(categoryId && { categoryId: parseInt(categoryId) }),
-      },
-      include: {
-        category: true,
-      },
-    });
-    
-    res.status(201).json(note);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Update the get all notes endpoint to include category
-app.get('/api/notes', async (req, res) => {
-  try {
-    const notes = await prisma.note.findMany({
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      include: {
-        category: true,
-      },
-    });
-    res.json(notes);
-  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

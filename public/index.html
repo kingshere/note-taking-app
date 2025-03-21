@@ -5,30 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Note Taking App</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Note Taking App</h1>
-    
-    <div class="form-container">
-      <input type="hidden" id="noteId">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" placeholder="Enter title">
-      </div>
-      <div class="form-group">
-        <label for="content">Content</label>
-        <textarea id="content" placeholder="Enter content"></textarea>
-      </div>
-      <div class="button-group">
-        <button id="saveBtn">Save Note</button>
-        <button id="cancelBtn" style="display: none;">Cancel</button>
-      </div>
+  <header>
+    <div class="container">
+      <h1><i class="fas fa-sticky-note"></i> Note Taking App</h1>
     </div>
-    
-    <div class="notes-container">
-      <h2>Your Notes</h2>
-      <div id="notesList"></div>
+  </header>
+
+  <div class="container">
+    <div class="app-container">
+      <div class="form-container">
+        <h2 class="form-title">
+          <span id="form-mode">Create New</span> Note
+        </h2>
+        <form id="note-form">
+          <input type="hidden" id="noteId">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" placeholder="Enter a descriptive title">
+          </div>
+          
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="">-- Select Category --</option>
+              <!-- Categories will be loaded dynamically -->
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="content">Content</label>
+            <textarea id="content" placeholder="Write your note here..."></textarea>
+          </div>
+          
+          <div class="button-group">
+            <button type="submit" id="saveBtn" class="primary-btn">
+              <i class="fas fa-save"></i> Save Note
+            </button>
+            <button type="button" id="cancelBtn" class="secondary-btn" style="display: none;">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </form>
+        
+        <div class="form-group" style="margin-top: 20px;">
+          <label for="newCategory">Add New Category</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="newCategory" placeholder="Enter category name">
+            <button type="button" id="addCategoryBtn" class="primary-btn">
+              <i class="fas fa-plus"></i> Add
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="notes-container">
+        <div class="notes-title">
+          Your Notes <span class="notes-count" id="notesCount">0</span>
+        </div>
+        
+        <div class="filter-container">
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search notes...">
+          </div>
+          
+          <select id="categoryFilter" class="category-filter">
+            <option value="">All Categories</option>
+            <!-- Categories will be loaded dynamically -->
+          </select>
+        </div>
+        
+        <div id="notesList">
+          <!-- Notes will be loaded dynamically -->
+          <div class="empty-notes">
+            <i class="fas fa-sticky-note"></i>
+            <p>No notes found. Create your first note!</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   
