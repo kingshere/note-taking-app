@@ -52,7 +52,7 @@ header h1 {
 
 .app-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
   gap: 30px;
 }
 
@@ -359,4 +359,3 @@ button:hover {
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
-}
