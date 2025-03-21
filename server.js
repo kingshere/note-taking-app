@@ -1,12 +1,19 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
+const path = require('path'); // Add this line
 
 const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
+
+// Add this route at the top of your routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Get all notes
 app.get('/api/notes', async (req, res) => {
