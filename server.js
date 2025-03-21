@@ -120,6 +120,85 @@ app.delete('/api/notes/:id', async (req, res) => {
   }
 });
 
+// Get all categories
+app.get('/api/categories', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create a category
+app.post('/api/categories', async (req, res) => {
+  try {
+    const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'Category name is required' });
+    }
+    
+    const category = await prisma.category.create({
+      data: { name },
+    });
+    
+    res.status(201).json(category);
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'A category with this name already exists' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update the create note endpoint to include category
+app.post('/api/notes', async (req, res) => {
+  try {
+    const { title, content, categoryId } = req.body;
+    
+    if (!title || !content) {
+      return res.status(400).json({ error: 'Title and content are required' });
+    }
+    
+    const note = await prisma.note.create({
+      data: {
+        title,
+        content,
+        ...(categoryId && { categoryId: parseInt(categoryId) }),
+      },
+      include: {
+        category: true,
+      },
+    });
+    
+    res.status(201).json(note);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update the get all notes endpoint to include category
+app.get('/api/notes', async (req, res) => {
+  try {
+    const notes = await prisma.note.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      include: {
+        category: true,
+      },
+    });
+    res.json(notes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
