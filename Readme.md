@@ -26,38 +26,6 @@ A modern, responsive note-taking application with category management, built wit
 
 - Node.js (v14 or higher)
 - npm (v6 or higher)
-
-## 🛠️ Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/yourusername/note-taking-app.git
-cd note-taking-app
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Set up the database:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-4. Start the server:
-
-```bash
-npm start
-```
-
-5. Open your browser and navigate to:
-
-```
-http://localhost:3000
 ```
 
 ## 💻 Prisma Implementation
@@ -149,12 +117,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgements
 
-- [Prisma](https://www.prisma.io/) - Next-generation ORM for Node.js and TypeScript
-- [Express](https://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js
-- [Node.js](https://nodejs.org/) - JavaScript runtime built on Chrome's V8 JavaScript engine
 
----
 
 Made with ❤️ by Barnik
