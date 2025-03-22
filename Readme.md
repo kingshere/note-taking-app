@@ -20,7 +20,7 @@ A modern, responsive note-taking application with category management, built wit
 
 **LANDING PAGE** :
 
-![Note Taking App Interface](./screenshots/screencapture-localhost-3000-2025-03-22-01_35_22.png)
+![Note Taking App Interface](./screenshots/Screenshot%202025-03-22%20012911.png)
 
 **PRISMA STUDIO** :
 
