@@ -13,6 +13,8 @@ A modern, responsive note-taking application with category management, built wit
 - 💾 Persistent storage with SQLite database
 - 🎨 Modern, vibrant UI with animations
 - 📱 Responsive design for all devices
+- 🌙 Dark mode support
+- 🖋️ Rich text editor for note content
 
 ## 📸 Screenshots
 
@@ -106,9 +108,7 @@ const notes = await prisma.note.findMany({
 ## 🎯 Future Enhancements
 
 - User authentication and authorization
-- Rich text editor for note content
 - Cloud synchronization
-- Dark mode support
 - Tagging system
 - Collaborative editing
 - Mobile application
