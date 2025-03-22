@@ -1,4 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Theme toggle functionality
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = themeToggle.querySelector('i');
+  
+  // Check for saved theme preference or use device preference
+  const savedTheme = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  // Apply theme based on saved preference or device preference
+  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    document.documentElement.classList.add('dark-theme');
+    themeIcon.classList.replace('fa-moon', 'fa-sun');
+  }
+  
+  // Toggle theme when button is clicked
+  themeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark-theme');
+    
+    // Update icon
+    if (document.documentElement.classList.contains('dark-theme')) {
+      themeIcon.classList.replace('fa-moon', 'fa-sun');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      themeIcon.classList.replace('fa-sun', 'fa-moon');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+  
   const API_URL = 'http://localhost:3000/api';
   
   // DOM Elements
