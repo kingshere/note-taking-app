@@ -18,6 +18,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const addCategoryBtn = document.getElementById('addCategoryBtn');
   
   let allNotes = [];
+  let editor = null;
+  
+  // Initialize TinyMCE
+  const initEditor = () => {
+    tinymce.init({
+      selector: '#content',
+      height: 300,
+      menubar: false,
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | formatselect | ' +
+        'bold italic backcolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | help',
+      content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
+      setup: function(ed) {
+        editor = ed;
+      }
+    });
+  };
+  
+  // Initialize the editor
+  initEditor();
   
   // Load all notes
   const loadNotes = async () => {
@@ -85,12 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const date = new Date(note.updatedAt);
     const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     
+    // Create a temporary div to strip HTML tags for preview
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = note.content;
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
     noteDiv.innerHTML = `
       <div class="note-header">
         <h3 class="note-title">${note.title}</h3>
         ${note.category ? `<span class="note-category">${note.category.name}</span>` : ''}
       </div>
-      <p class="note-content">${formatContent(note.content)}</p>
+      <p class="note-content">${formatContent(textContent)}</p>
       <div class="note-footer">
         <span class="note-date">Last updated: ${formattedDate}</span>
         <div class="note-actions">
@@ -100,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <button class="delete-btn" data-id="${note.id}">
             <i class="fas fa-trash"></i> Delete
           </button>
+          <button class="view-btn" data-id="${note.id}">
+            <i class="fas fa-eye"></i> View
+          </button>
         </div>
       </div>
     `;
@@ -107,11 +141,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add event listeners
     const editBtn = noteDiv.querySelector('.edit-btn');
     const deleteBtn = noteDiv.querySelector('.delete-btn');
+    const viewBtn = noteDiv.querySelector('.view-btn');
     
     editBtn.addEventListener('click', () => editNote(note));
     deleteBtn.addEventListener('click', () => deleteNote(note.id));
+    viewBtn.addEventListener('click', () => viewNote(note));
     
     return noteDiv;
+  };
+  
+  // View note in a modal
+  const viewNote = (note) => {
+    // Create modal container
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'modal-container';
+    
+    // Create modal content
+    modalContainer.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>${note.title}</h2>
+          ${note.category ? `<span class="note-category">${note.category.name}</span>` : ''}
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="note-full-content">${note.content}</div>
+        </div>
+        <div class="modal-footer">
+          <button class="edit-modal-btn primary-btn">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="close-modal-btn secondary-btn">
+            Close
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(modalContainer);
+    
+    // Add event listeners
+    const closeButtons = modalContainer.querySelectorAll('.close-modal, .close-modal-btn');
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.body.removeChild(modalContainer);
+      });
+    });
+    
+    // Edit button
+    const editBtn = modalContainer.querySelector('.edit-modal-btn');
+    editBtn.addEventListener('click', () => {
+      document.body.removeChild(modalContainer);
+      editNote(note);
+    });
   };
   
   // Format content (truncate if too long)
@@ -188,7 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     
     const title = titleInput.value.trim();
-    const content = contentInput.value.trim();
+    // Get content from TinyMCE
+    const content = editor.getContent();
     const categoryId = categorySelect.value;
     
     if (!title || !content) {
@@ -247,7 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const editNote = (note) => {
     noteIdInput.value = note.id;
     titleInput.value = note.title;
-    contentInput.value = note.content;
+    
+    // Set content in TinyMCE
+    editor.setContent(note.content);
     
     if (note.categoryId) {
       categorySelect.value = note.categoryId;
@@ -296,6 +382,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetForm = () => {
     noteForm.reset();
     noteIdInput.value = '';
+    
+    // Reset TinyMCE content
+    editor.setContent('');
+    
     formMode.textContent = 'Create New';
     saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Note';
     cancelBtn.style.display = 'none';

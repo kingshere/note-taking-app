@@ -6,6 +6,8 @@
   <title>Note Taking App</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Update TinyMCE CDN with your API key -->
+  <script src="https://cdn.tiny.cloud/1/m4mu6axp4t7u40iqfham7mt7lx0qdqs6mzhmdxoac5lwbgx1/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
   <header>
@@ -35,9 +37,12 @@
             </select>
           </div>
           
+          <!-- In the form section, replace the textarea with a div -->
           <div class="form-group">
             <label for="content">Content</label>
-            <textarea id="content" placeholder="Write your note here..."></textarea>
+            <div id="content-editor-container">
+              <textarea id="content" placeholder="Write your note here..."></textarea>
+            </div>
           </div>
           
           <div class="button-group">
